@@ -1,4 +1,3 @@
-from django.core.mail import send_mail
 from rest_framework import generics, status
 from rest_framework.permissions import AllowAny
 from rest_framework.response import Response
@@ -8,6 +7,7 @@ from users.models import User
 from users.permissions import IsStaffOrSelf, IsStaff
 from users.serializers import UserSerializer, EmptySerializer, PasswordResetRequestSerializer, \
     PasswordResetConfirmSerializer, CustomTokenObtainPairSerializer
+from users.tasks import send_activation_email
 
 
 class UserCreateAPIView(generics.CreateAPIView):
@@ -24,15 +24,12 @@ class UserCreateAPIView(generics.CreateAPIView):
         self.send_activation_email(user)
 
     def send_activation_email(self, user):
+        """Отправка активации на email через Celery."""
+
         activation_url = f'{self.request.scheme}://{self.request.get_host()}/users/activate/{user.activation_code}/'
-        send_mail(
-            'Подтверждение регистрации',
-            f'Для подтверждения регистрации перейдите по ссылке: {activation_url}',
-            settings.EMAIL_HOST_USER,
-            [user.email],
-            fail_silently=False
-        )
-        print(f"#### ACTIVATE : {activation_url}")  # DEBUG
+        send_activation_email.delay(user.email, activation_url)  # Вызов задачи Celery
+        if settings.DEBUG:
+            print(f"#### DEBUG: Send Activate link: {activation_url} to {user.email}")
 
 
 class UserActivationView(generics.GenericAPIView):

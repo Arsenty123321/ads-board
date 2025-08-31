@@ -6,8 +6,10 @@ from django.utils.http import urlsafe_base64_encode, urlsafe_base64_decode
 from rest_framework import serializers
 from rest_framework_simplejwt.tokens import RefreshToken
 
+from config import settings
 from config.settings import EMAIL_HOST_USER
 from users.models import User
+from users.tasks import send_password_reset_link_email
 
 
 class EmptySerializer(serializers.Serializer):
@@ -93,17 +95,12 @@ class PasswordResetRequestSerializer(serializers.Serializer):
 
         request = self.context.get('request')
 
-        # Формируем ссылку для сброса пароля
+        # Формируем ссылку для сброса пароля и отправляем на email пользователя
         reset_link = f"{request.scheme}://{request.get_host()}/reset-password-confirm/{uidb64}/{token}/"
+        send_password_reset_link_email.delay(email, reset_link)  # Вызов задачи Celery
 
-        send_mail(
-            'Сброс пароля',
-            f'Для сброса пароля перейдите по ссылке: {reset_link}',
-            EMAIL_HOST_USER,
-            [email],
-            fail_silently=False,
-        )
-        print(f"#### ACTIVATE : {reset_link}")  # DEBUG
+        if settings.DEBUG:
+            print(f"#### DEBUG: Send Reset link: {reset_link}")  # DEBUG
 
 
 class PasswordResetConfirmSerializer(serializers.Serializer):
