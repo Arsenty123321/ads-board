@@ -48,6 +48,7 @@ class UserActivationView(generics.GenericAPIView):
 
 
 class CustomTokenObtainPairView(generics.GenericAPIView):
+    serializer_class = EmptySerializer  # Calm down swagger
     def post(self, request):
         serializer = CustomTokenObtainPairSerializer(data=request.data)
         if serializer.is_valid():
@@ -79,6 +80,7 @@ class UserDestroyAPIView(generics.DestroyAPIView):
 
 
 class PasswordResetRequestView(generics.GenericAPIView):
+    serializer_class = EmptySerializer  # Calm down swagger
     permission_classes = [AllowAny]
 
     def post(self, request):
@@ -93,6 +95,7 @@ class PasswordResetRequestView(generics.GenericAPIView):
 
 
 class PasswordResetConfirmView(generics.GenericAPIView):
+    serializer_class = EmptySerializer  # Calm down swagger
     permission_classes = [AllowAny]
 
     def post(self, request):
