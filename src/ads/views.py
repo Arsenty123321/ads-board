@@ -3,45 +3,45 @@ from rest_framework.permissions import IsAuthenticated, AllowAny
 
 from ads.models import Advertisement, Feedback
 from ads.paginators import CustomPagination
-from ads.serilazers import AdSerializer, AdsListSerializer, FeedbackSerializer
+from ads.serilazers import AdSerializer, AdListSerializer, FeedbackSerializer
 from users.permissions import IsOwner, IsAdmin
 
 
-class AdsCreateAPIView(generics.CreateAPIView):
-    """Контроллер создания объявления."""
+class AdCreateAPIView(generics.CreateAPIView):
+    """Создание объявления."""
 
     queryset = Advertisement.objects.all()
     serializer_class = AdSerializer
     permission_classes = [IsAuthenticated]
 
 
-class AdsListAPIView(generics.ListAPIView):
-    """Контроллер просмотра списка всех объявлений."""
+class AdListAPIView(generics.ListAPIView):
+    """Просмотр списка всех объявлений."""
 
     queryset = Advertisement.objects.all()
-    serializer_class = AdsListSerializer
+    serializer_class = AdListSerializer
     pagination_class = CustomPagination
     permission_classes = [AllowAny]
 
 
-class AdsRetrieveAPIView(generics.RetrieveAPIView):
-    """Контроллер для просмотра объявления."""
+class AdRetrieveAPIView(generics.RetrieveAPIView):
+    """Просмотр одного объявления."""
 
     queryset = Advertisement.objects.all()
     serializer_class = AdSerializer
     permission_classes = [IsAuthenticated]
 
 
-class AdsUpdateAPIView(generics.UpdateAPIView):
-    """Контроллер для изменения объявления."""
+class AdUpdateAPIView(generics.UpdateAPIView):
+    """Изменение объявления."""
 
     queryset = Advertisement.objects.all()
     serializer_class = AdSerializer
     permission_classes = (IsAuthenticated, IsOwner | IsAdmin,)
 
 
-class AdsDestroyAPIView(generics.DestroyAPIView):
-    """Контроллер удаления объявления."""
+class AdDestroyAPIView(generics.DestroyAPIView):
+    """Удаление объявления."""
 
     queryset = Advertisement.objects.all()
     serializer_class = AdSerializer
@@ -49,7 +49,7 @@ class AdsDestroyAPIView(generics.DestroyAPIView):
 
 
 class FeedbackCreateAPIView(generics.CreateAPIView):
-    """Контроллер создания отзыва."""
+    """Создание отзыва."""
     queryset = Feedback.objects.all()
     serializer_class = FeedbackSerializer
     permission_classes = [IsAuthenticated]
@@ -64,7 +64,7 @@ class FeedbackCreateAPIView(generics.CreateAPIView):
 
 
 class FeedbackListAPIView(generics.ListAPIView):
-    """Контроллер для просмотра всех отзывов объявления."""
+    """Просмотр всех отзывов из определенного объявления."""
     serializer_class = FeedbackSerializer
     permission_classes = [IsAuthenticated]
     pagination_class = CustomPagination
@@ -77,7 +77,7 @@ class FeedbackListAPIView(generics.ListAPIView):
 
 
 class FeedbackRetrieveAPIView(generics.RetrieveAPIView):
-    """Контроллер для просмотра одного отзыва."""
+    """Просмотр одного отзыва."""
 
     queryset = Feedback.objects.all()
     serializer_class = FeedbackSerializer
@@ -85,7 +85,7 @@ class FeedbackRetrieveAPIView(generics.RetrieveAPIView):
 
 
 class FeedbackUpdateAPIView(generics.UpdateAPIView):
-    """Контроллер для изменения отзыва"""
+    """Изменение отзыва."""
 
     serializer_class = FeedbackSerializer
     queryset = Feedback.objects.all()
@@ -93,8 +93,9 @@ class FeedbackUpdateAPIView(generics.UpdateAPIView):
 
 
 class FeedbackDestroyAPIView(generics.DestroyAPIView):
-    """Контроллер для удаления отзыва"""
+    """Удаление отзыва."""
 
     queryset = Feedback.objects.all()
     serializer_class = FeedbackSerializer
     permission_classes = (IsAuthenticated, IsOwner | IsAdmin,)
+

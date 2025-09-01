@@ -49,6 +49,7 @@ class UserActivationView(generics.GenericAPIView):
 
 class CustomTokenObtainPairView(generics.GenericAPIView):
     serializer_class = EmptySerializer  # Calm down swagger
+
     def post(self, request):
         serializer = CustomTokenObtainPairSerializer(data=request.data)
         if serializer.is_valid():

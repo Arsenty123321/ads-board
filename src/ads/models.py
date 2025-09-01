@@ -28,7 +28,7 @@ class Feedback(models.Model):
 
     text = models.TextField(max_length=1024, verbose_name="Текст отзыва")
     owner = models.ForeignKey(User, related_name="user_feedback", on_delete=models.CASCADE,
-                               verbose_name="Владелец отзыва", blank=True, null=True)
+                              verbose_name="Владелец отзыва", blank=True, null=True)
     ad = models.ForeignKey(Advertisement, related_name="ad_feedback", on_delete=models.CASCADE,
                            verbose_name="Объявление, под которым оставлен отзыв", blank=True, null=True)
     created_at = models.DateTimeField(default=timezone.now, verbose_name="Дата и время отзыва")

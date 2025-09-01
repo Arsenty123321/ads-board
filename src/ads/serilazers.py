@@ -18,7 +18,7 @@ class AdSerializer(serializers.ModelSerializer):
         fields = '__all__'
 
 
-class AdsListSerializer(serializers.ModelSerializer):
+class AdListSerializer(serializers.ModelSerializer):
     """Сериализатор для списка объявлений."""
 
     class Meta:

@@ -1,13 +1,11 @@
 from django.contrib.auth import authenticate
 from django.contrib.auth.tokens import PasswordResetTokenGenerator
-from django.core.mail import send_mail
 from django.utils.encoding import force_bytes, force_str
 from django.utils.http import urlsafe_base64_encode, urlsafe_base64_decode
 from rest_framework import serializers
 from rest_framework_simplejwt.tokens import RefreshToken
 
 from config import settings
-from config.settings import EMAIL_HOST_USER
 from users.models import User
 from users.tasks import send_password_reset_link_email
 
@@ -113,7 +111,7 @@ class PasswordResetConfirmSerializer(serializers.Serializer):
         """Проверка токена на сброс пароля"""
         uidb64 = attrs.get('uid')
         token = attrs.get('token')
-        new_password = attrs.get('new_password')
+        # new_password = attrs.get('new_password')
 
         try:
             uid = force_str(urlsafe_base64_decode(uidb64))
