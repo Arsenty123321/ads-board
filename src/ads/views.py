@@ -48,6 +48,19 @@ class AdDestroyAPIView(generics.DestroyAPIView):
     permission_classes = (IsAuthenticated, IsOwner | IsAdmin,)
 
 
+class MyAdListAPIView(generics.ListAPIView):
+    """Просмотр списка своих объявлений."""
+
+    queryset = Advertisement.objects.all()
+    serializer_class = AdSerializer
+    permission_classes = (IsAuthenticated, IsOwner,)
+    pagination_class = CustomPagination
+
+    def get_queryset(self):
+        user = self.request.user
+        return super().get_queryset().filter(owner=user)
+
+
 class FeedbackCreateAPIView(generics.CreateAPIView):
     """Создание отзыва."""
     queryset = Feedback.objects.all()
@@ -99,3 +112,15 @@ class FeedbackDestroyAPIView(generics.DestroyAPIView):
     serializer_class = FeedbackSerializer
     permission_classes = (IsAuthenticated, IsOwner | IsAdmin,)
 
+
+class MyFeedbackListAPIView(generics.ListAPIView):
+    """Просмотр списка своих отзывов."""
+
+    queryset = Feedback.objects.all()
+    serializer_class = FeedbackSerializer
+    permission_classes = (IsAuthenticated, IsOwner)
+    pagination_class = CustomPagination
+
+    def get_queryset(self):
+        user = self.request.user
+        return super().get_queryset().filter(owner=user)
