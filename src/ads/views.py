@@ -1,4 +1,5 @@
 from rest_framework import generics
+from rest_framework.filters import SearchFilter
 from rest_framework.permissions import IsAuthenticated, AllowAny
 
 from ads.models import Advertisement, Feedback
@@ -20,6 +21,8 @@ class AdListAPIView(generics.ListAPIView):
 
     queryset = Advertisement.objects.all()
     serializer_class = AdListSerializer
+    filter_backends = [SearchFilter]
+    search_fields = ['title']
     pagination_class = CustomPagination
     permission_classes = [AllowAny]
 
