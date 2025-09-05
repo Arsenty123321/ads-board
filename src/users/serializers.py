@@ -6,6 +6,7 @@ from rest_framework import serializers
 from rest_framework_simplejwt.tokens import RefreshToken
 
 from config import settings
+from config.settings import FRONTEND_SITE_URL
 from users.models import User
 from users.tasks import send_password_reset_link_email
 
@@ -94,7 +95,11 @@ class PasswordResetRequestSerializer(serializers.Serializer):
         request = self.context.get('request')
 
         # Формируем ссылку для сброса пароля и отправляем на email пользователя
-        reset_link = f"{request.scheme}://{request.get_host()}/reset-password-confirm/{uidb64}/{token}/"
+        if settings.DEBUG:
+            reset_link = f"{request.scheme}://{request.get_host()}/reset-password-confirm/{uidb64}/{token}/"
+        else:
+            reset_link = f"{FRONTEND_SITE_URL}/reset-password-confirm/{uidb64}/{token}/"
+
         send_password_reset_link_email.delay(email, reset_link)  # Вызов задачи Celery
 
         if settings.DEBUG:
