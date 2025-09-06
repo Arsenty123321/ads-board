@@ -3,7 +3,7 @@ from django.urls import path
 from ads.apps import AdsConfig
 from ads.views import AdCreateAPIView, AdListAPIView, AdRetrieveAPIView, AdUpdateAPIView, AdDestroyAPIView, \
     MyAdListAPIView, FeedbackListAPIView, FeedbackCreateAPIView, FeedbackRetrieveAPIView, FeedbackUpdateAPIView, \
-    FeedbackDestroyAPIView, MyFeedbackListAPIView
+    FeedbackDestroyAPIView, MyFeedbackListAPIView, health_check
 
 app_name = AdsConfig.name
 
@@ -23,4 +23,7 @@ urlpatterns = [
     path("feedback/<int:pk>/update/", FeedbackUpdateAPIView.as_view(), name="feedback_update"),
     path("feedback/<int:pk>/delete/", FeedbackDestroyAPIView.as_view(), name="feedback_delete"),
     path("feedback/my_list/", MyFeedbackListAPIView.as_view(), name="feedback_my_list"),
+
+    # Healthcheck endpoint
+    path('healthcheck/', health_check, name='health_check'),
 ]
