@@ -49,8 +49,10 @@ jobs:
     - name: Run tests
       env:
         SECRET_KEY: 'TEST'
+        CELERY_BROKER_URL : 'memory://'
       run: |
-         poetry run coverage run --source='.' manage.py test && poetry run coverage report
+        cd src
+        poetry run coverage run --source='.' manage.py test && poetry run coverage report
 
   build:
     runs-on: ubuntu-latest
@@ -61,11 +63,13 @@ jobs:
     - name: Log in to Docker Hub
       run: echo ${{ secrets.DOCKER_HUB_ACCESS_TOKEN }} | docker login -u ${{ secrets.DOCKER_HUB_USERNAME }} --password-stdin
     - name: Build Docker image
-      run: docker build -t ${{ secrets.DOCKER_HUB_USERNAME }}/${{ vars.GITHUB_REPOSITORY }}:${{ github.sha }} .
+      run: docker build -t ${{ vars.DOCKER_HUB_REPO_NAME }}:${{ github.sha }} .
     - name: Push Docker image to Docker Hub
-      run: docker push ${{ secrets.DOCKER_HUB_USERNAME }}/${{ vars.GITHUB_REPOSITORY }}:${{ github.sha }}
+      run: docker push ${{ vars.DOCKER_HUB_REPO_NAME }}:${{ github.sha }}
     - name: Push latest tag to Docker Hub
-      run: docker tag ${{ secrets.DOCKER_HUB_USERNAME }}/${{ vars.GITHUB_REPOSITORY }}:${{ github.sha }} ${{ secrets.DOCKER_HUB_USERNAME }}/${{ vars.GITHUB_REPOSITORY }}:latest
+      run: |
+        docker tag ${{ vars.DOCKER_HUB_REPO_NAME }}:${{ github.sha }} ${{ vars.DOCKER_HUB_REPO_NAME }}:latest
+        docker push ${{ vars.DOCKER_HUB_REPO_NAME }}:latest
 
   deploy:
     runs-on: ubuntu-latest
@@ -112,13 +116,15 @@ jobs:
           REDIS_LOCATION = "redis://redis:6379/5"
           CELERY_BROKER_URL = "redis://redis:6379/7"
           CELERY_RESULT_BACKEND = "redis://redis:6379/7"
-          BACKEND_DOCKER_IMAGE = ${{ vars.GITHUB_REPOSITORY }}:latest
-          ENV_EOF
+          FRONTEND_SITE_URL = ${{ vars.FRONTEND_SITE_URL }}
+          BACKEND_DOCKER_IMAGE = ${{ vars.DOCKER_HUB_REPO_NAME }}:latest
+        ENV_EOF
         EOF
     - name: Start docker-compose containers
       run: |
         ssh -o StrictHostKeyChecking=no ${{ secrets.SSH_USER }}@${{ secrets.SERVER_IP }} << 'EOF'
           cd ${{ vars.DEPLOY_DIR }}
+          docker-compose pull
           docker-compose up --force-recreate -d
         EOF
     - name: Cleanup

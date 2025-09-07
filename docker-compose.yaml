@@ -5,7 +5,7 @@ services:
     build:
       context: .
       dockerfile: Dockerfile
-    image: ${DOCKER_IMAGE}
+    image: ${BACKEND_DOCKER_IMAGE}
     command: ./init.sh
     env_file:
       - .env
@@ -60,22 +60,8 @@ services:
     command: redis-server --save 60 1 --loglevel warning
 
   celery:
-    image: ${DOCKER_IMAGE}
+    image: ${BACKEND_DOCKER_IMAGE}
     command: celery -A config worker --loglevel=info
-    env_file:
-      - .env
-    depends_on:
-      db:
-        condition: service_healthy
-      redis:
-        condition: service_healthy
-      backend:
-        condition: service_healthy
-    restart: unless-stopped
-
-  celery_beat:
-    image: ${DOCKER_IMAGE}
-    command: celery -A config beat --loglevel=info
     env_file:
       - .env
     depends_on:
