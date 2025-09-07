@@ -5,7 +5,7 @@ from django.utils.http import urlsafe_base64_encode
 from rest_framework import status
 from rest_framework.test import APITestCase, APIClient
 from rest_framework_simplejwt.tokens import RefreshToken
-from django.contrib.auth import get_user_model, authenticate
+from django.contrib.auth import get_user_model
 from unittest.mock import patch
 
 User = get_user_model()
@@ -48,21 +48,6 @@ class UserTests(APITestCase):
         response = self.client.post(url, data, format='json')
         self.assertEqual(response.status_code, status.HTTP_201_CREATED)
         self.assertTrue(User.objects.filter(email='newuser@test.com').exists())
-
-    # def test_user_login(self):
-    #     """Тест входа пользователя."""
-    #     url = reverse('users:login')
-    #     data = {
-    #         "email": "testuser@test.com",
-    #         "password": "testpassword"
-    #     }
-    #     user_auth = authenticate(email='testuser@test.com', password='testpassword')
-    #
-    #     response = self.client.post(url, data, format='json')
-    #     print(f"XXXXXXXXXXXXXXXXXX {user_auth} Response data: {response.data}")
-    #     self.assertEqual(response.status_code, status.HTTP_200_OK)
-    #     self.assertIn('access', response.data)
-    #     self.assertIn('refresh', response.data)
 
     def test_user_activation(self):
         """Тест активации пользователя."""
