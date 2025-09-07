@@ -1,4 +1,4 @@
-name: Django lms CI/CD Pipeline
+name: Django ads-board CI/CD Pipeline
 
 on: [push, pull_request]
 
